@@ -35,11 +35,14 @@ site1$annual
 # consider a different pv array that only uses 
 # diffuse and has non standard efficiency (0.6)
 site2 = solarpv(area=0.1, solar=sierraczosolar, clr="green", eunit="W", g=FALSE, eff=0.6, etype="direct")
-site2$mean
+site2$mean #comparing site 2 mean
 
 ```
 
 Informal Sensitivity Analysis
+
+**Informal** - try varying parameters
+Decide which parameter(s) and what range to vary the parameter over - what is the uncertainty?
 
 ```{r sen1, eval=T}
 
@@ -49,6 +52,7 @@ Informal Sensitivity Analysis
 # notice how map adds the one parameter that is missing from the input list
 eff = rnorm(mean=0.6, sd = 0.1, n=20)
 site2 = eff %>% map(~solarpv( area=0.1, solar=sierraczosolar, clr="green", eunit="W", g=FALSE, etype="direct", eff=.x ))
+# Map runs this function for the list of random values - we tell it to do this for the different *eff* values; that we just created out of random dataset
 
 head(site2)
 
