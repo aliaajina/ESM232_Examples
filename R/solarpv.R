@@ -41,6 +41,8 @@ solarpv = function(area, eff=0.8, PR=0.75, solar, clr="blue", eunits="J", etype=
                     
   
   # total annual radiation
+  # grouping by year because she wants total radiation
+  # summing efficiency factor
   annualsolar = solar %>% group_by(year) %>% dplyr::summarize(Kadj=sum(Kadj))
   
   
@@ -55,9 +57,11 @@ solarpv = function(area, eff=0.8, PR=0.75, solar, clr="blue", eunits="J", etype=
   }
 
   # plot if users requested
+  # This creates a bar graph is the users wants it
   if (g)
       barplot(annualsolar$elect, names=annualsolar$year, col=clr, ylab=ylbs, xlab="Year")
 
   return(list(annual=annualsolar[,c("year","elect")], mean=mean(annualsolar$elect)))
 
-}
+} 
+#returns list for annual solar power every year and the mean for all time (all years)

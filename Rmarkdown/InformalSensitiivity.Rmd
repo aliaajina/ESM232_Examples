@@ -54,11 +54,12 @@ eff = rnorm(mean=0.6, sd = 0.1, n=20)
 site2 = eff %>% map(~solarpv( area=0.1, solar=sierraczosolar, clr="green", eunit="W", g=FALSE, etype="direct", eff=.x ))
 # Map runs this function for the list of random values - we tell it to do this for the different *eff* values; that we just created out of random dataset
 
-head(site2)
+head(site2) # now I have an annual array and mean value array
 
 # this is pretty messy - but we can extract a useful data structure,lets say we want 
 # just the annual data (not the mean annual time series), and then reformat as a data frame with nice column names
-tmp = map_df(site2,`[`, c("annual")) 
+
+tmp = map_df(site2,`[`, c("annual"))  # can also use the map function to extract something from a list; can also use map function to repeat an extraction from a list over and over again - square bracket means extract! - this is telling it to take out all of the annual values from the list
 
 site2df = data.frame(year = tmp$annual$year, elect= tmp$annual$elect)
 
@@ -69,6 +70,7 @@ ggplot(site2df, aes(year,elect, group=year ))+geom_boxplot()+labs(y="Electricity
 site2_average = site2df %>% group_by(year) %>% dplyr::summarize(elect=mean(elect))
 
 # now add this to the plot - note that we remove the grouping by using group=1
+#### Question: How does group=1 remove the grouping?
 ggplot(site2df, aes(year,elect, group=year))+geom_boxplot()+labs(y="Electricity in W")+
   geom_line(data=site2_average, aes(year, elect, group=1), col="orange")
 
