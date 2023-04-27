@@ -48,7 +48,7 @@ site2 = ethresh %>% map(~solarpv( area=0.1,
 
 
 # extract a useful data structure,lets say we want # just the annual data (not the mean), and then reformat as a data frame with nice column names
-tmp = map_df(site2,`[`, c("annual")) 
+tmp = map_df(site2,`[`, c("annual")) # Out of this list, extract annual
 site2df = data.frame(year = tmp$annual$year, 
                      elect= tmp$annual$elect)
 
@@ -59,14 +59,14 @@ ggplot(site2df,
   labs(y="Electricity generated in W", x="Year")
 
 # we also might want to see mean electricity generation across parameter uncertainty
-mean_elect = map_df(site2,`[`, c("mean")) 
+mean_elect = map_df(site2,`[`, c("mean")) # extracting all of the mean values here - we use the bracket to extract just mean
 # because there is only 1 value for each ethresh we can add as a column
 mean_elect$ethresh = ethresh
 # add the efficiency
 p1 = ggplot(mean_elect, aes(mean))+geom_histogram()+labs(x="Mean Annual Electricity W")
 p1
 p2 = ggplot(mean_elect, aes(ethresh, mean))+geom_point(cex=2, col="orange")+labs(y="Mean Annual Electricity W", x="Threshold Radiation (kJ/m2)  \nabove which energy production is more efficient")
-ggarrange(p1,p2)
+ggarrange(p1,p2) # uses ggarrange to save a plot to a variable - this puts the two plots together side by side
 
 
 ```
@@ -131,6 +131,7 @@ p2 = ggplot(mean_elect, aes(eff, mean, col=ethresh))+geom_point(cex=2)+
 ggarrange(p1,p2)
 
 # what do we learn from this
+# that the efficiency is more of a dependent variable than threshold radiation? threashold radiation doesn't seem to have any linear effect
 
 # extract annual 
 tmp = map_df(results,`[`, c("annual")) 
@@ -317,11 +318,12 @@ now lets add both of our functions (hydro and solar power), together with comput
 Notice that we can 're-use' our functions such as **compute_profit_frompower** for both sources of power
 (such as our reservoir power model) to build out our complete model
 
-```{r reuse}
+```{r}
 
 # rerun 'sampling' in using_data_with_functions.Rmd. above to get results from our reserovir model
 
 # lets start with hydro power
+#### don't have the hydro power function in our R folder
 source("../R/power_gen.R")
 
 # we are 'making up' inputs for hydro power - to have it match the number of year 
