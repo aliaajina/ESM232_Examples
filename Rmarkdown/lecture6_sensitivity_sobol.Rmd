@@ -141,7 +141,7 @@ and then use the parameter with second highest total effect for color
 
 parms = as.data.frame(sens_Catm_Sobol$X)
 colnames(parms)= colnames(X1)
-res = pmap_dbl(parms, Catm)
+res = pmap_dbl(parms, Catm) # 
 
 
 sens_Catm_Sobol = sensitivity::tell(sens_Catm_Sobol,res, res.names="ga")
@@ -167,6 +167,7 @@ both = cbind.data.frame(parms, gs=sens_Catm_Sobol$y)
 
 # look at response of conductance to the two most important variables
 ggplot(both, aes(v,gs, col=height))+geom_point()+labs(y="Conductance (mm/s)", x="Windspeed")
+# X-axis is most sensitive variable, color by second most sensitive variable
 
 ```
 
@@ -180,6 +181,8 @@ ggplot(both, aes(v,gs, col=height))+geom_point()+labs(y="Conductance (mm/s)", x=
  [Building Cooling Energy Mdoel](building_energy_sobol.pdf)
  
  [Uranium in Groundwater Model](Uranium_water_sobol.pdf)
+ 
+ Thinking about how sensitive our model is very important to understand our model further and make adjustments
  
  
 
@@ -212,7 +215,7 @@ row.names(sens_Catm_Sobol2$T) = colnames(parms)
 sens_Catm_Sobol2$T
 
 # second order parameters interaction in controlling sensitivity
-# parameters are in order, interactiosn are small here
+# parameters are in order, interactios are small here
 sens_Catm_Sobol2$S2
 
 ```

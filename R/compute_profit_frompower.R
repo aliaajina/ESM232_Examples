@@ -6,7 +6,7 @@
 #' @return data frame with estimate of profit
 compute_profit_frompower = function(energy, year, price, discount=0.12) {
 
-  # make sure values are reasonable
+  # make sure values are reasonable with error checking
   if (length(energy) < 1)
     return(NA)
   

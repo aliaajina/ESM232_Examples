@@ -104,22 +104,22 @@ base_thresh = 10000
 ethresh = runif(min=base_thresh-deviation*base_thresh,
                 max = base_thresh+deviation*base_thresh, n=nsamples)
 
-eff = rnorm(mean=0.6, sd = 0.1, n=nsamples)
+eff = rnorm(mean=0.6, sd = 0.1, n=nsamples) # sampling for a normal distribution
 
-parms = cbind.data.frame(eff, ethresh)
+parms = cbind.data.frame(eff, ethresh) # combining them in a data frame where each column of the data frame is the parameters value
 
 # use pmap 
 # takes function name and then names of all parameters that don't change
 results = parms %>% pmap(solarpv,  area=0.1, 
                          solar=sierraczosolar, clr="green",
-                         eunit="W", g=FALSE, etype="direct")
+                         eunit="W", g=FALSE, etype="direct") # map says i don't know which variable you want me to change so use my .x - pmap actually goes by the variable names in the data frame so it knows to use efficiency for eff and ethresh for ethresh - which means you have to name your columns
 
 results[[1]]
 length(results)
 
 # now we can extract results from the list as above
 mean_elect = map_df(results,`[`, c("mean")) 
-# and we can add the parameter values for each run
+# and we can add the parameter values for each run as another column - will now have value of mean & ethreshold - since the annual value is an array it doesn't fit nicely (since it's year 1, y2, y3, etc)
 mean_elect = cbind.data.frame(mean_elect, parms)
 
 # plot - pick on of the 2 parameter as a color
@@ -131,7 +131,8 @@ p2 = ggplot(mean_elect, aes(eff, mean, col=ethresh))+geom_point(cex=2)+
 ggarrange(p1,p2)
 
 # what do we learn from this
-# that the efficiency is more of a dependent variable than threshold radiation? threashold radiation doesn't seem to have any linear effect
+# that the efficiency is more of a dependent variable than threshold radiation? threshold radiation doesn't seem to have any linear effect - the threshold parameter is the deviation in this line- it's must less important
+# here we are coloring by the other parameter so you can see how the parameters are related
 
 # extract annual 
 tmp = map_df(results,`[`, c("annual")) 
@@ -146,9 +147,10 @@ annual_elect$elect = tmp$annual$elect
 # Using a *For* Loop
 ```{r}
 
-# using a for loop
+# using a for loop - for loops are really slow in R - pmap is must faster
 # start by creating a data structures to hold results, separate 
 # for scenario mean and annual values
+# in for loops you have to set up the data structure to source the results - pmap automatically makes it for you - so here we are making the dataframe to store the results
 mean_elect_for = rep(NA, times=nsamples)
 # for annual we need rows as years, columns for samples
 years = unique(sierraczosolar$year)
@@ -175,6 +177,7 @@ tmp = annual_elect_for %>% pivot_longer(cols=-c(year))
 
 ggplot(tmp, aes(as.factor(year), value))+
   geom_boxplot()+labs(y="Mean Annual Electricity W", x="Year")
+#1944 is so low because it only had half the year of recorded values
 ```
 
 # Building models with blocks - functions that call other functions
