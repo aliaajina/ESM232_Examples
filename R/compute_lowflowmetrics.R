@@ -14,10 +14,11 @@ compute_lowflowmetrics = function(m,o, month, day, year,wy, low_flow_months=8) {
   flow = cbind.data.frame(m,o, month, day, year,wy)
   # first lets get minimum yearly values
 
+  #Group by water year, find minimum flow of each year
   tmp = flow %>% group_by(wy) %>% summarize(mino=min(o), minm=min(m))
-
+  #look at mean of minimum flow each year
   annual_min_err = mean(tmp$minm-tmp$mino)
-
+  #Correlation of minimum flow
   annual_min_cor = cor(tmp$minm, tmp$mino)
 
   # now lets get monthly values
