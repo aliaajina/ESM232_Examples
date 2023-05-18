@@ -106,8 +106,8 @@ Pinitial=10
 
 # want to learn about sensitivity to growth rate (r) and carrying capacity 
 # set the number of parameters
-np=2000
-K = rnorm(mean=200, sd=50, n=np)
+np=2000 # generate 2000 parameter sets
+K = rnorm(mean=200, sd=50, n=np) # carrying capacity
 r = rnorm(mean=0.05, sd=0.01, n=np)
 X1 = cbind.data.frame(r=r, K=K)
 
@@ -117,18 +117,18 @@ r = rnorm(mean=0.05, sd=0.01, n=np)
 X2 = cbind.data.frame(r=r, K=K)
 
 # fix any negative values and they are not meaningful
-X1 = X1 %>% map_df(pmax, 0.0)
+X1 = X1 %>% map_df(pmax, 0.0) # running each parameter set through pmax; so we don't have any negative parameters - in this context a growth rate, etc shouldn't be negative - so here we're saying, if they were negative, make them 0
 X2 = X2 %>% map_df(pmax, 0.0)
 
 # create our sobel object and get sets ofparameters for running the model
 
-sens_P = sobolSalt(model = NULL,X1, X2, nboot = 300)
+sens_P = sobolSalt(model = NULL,X1, X2, nboot = 300) # running sobel to generate a bunch of parameter sets - sobol loses the names of the parameters
 
 # our parameter sets are
 head(sens_P$X)
 
 # lets add names 
-colnames(sens_P$X) = c("r","K")
+colnames(sens_P$X) = c("r","K") # adding names since sobol takes them away
 
 # run our differential equation and keep the output
 # BUT
@@ -186,6 +186,18 @@ threshyear
 
 # Try it running ODE for different parameters
 
+```{r}
+parms2 = list(r=sens_P$X["r"], K=sens_P$X["K"])
+
+result2 = ode(y=rep(Pinitial, 8000), times=simtimes, func=dpopgrowth, parms=parms)
+
+# turn it into a data frame
+
+result2_long <- result2 %>% pivot_longer(cols = 1:8000, names_to = "parameter_sets")
+ggplot(result2, aes(time, P))+geom_point()
+
+```
+
 
 # Compute our metric for all the parameter sets
 
@@ -219,7 +231,7 @@ compute_metrics(result, 100)
 
 # lets make the threshold 90% of carrying capacity
 
-p_wrapper = function(r,K, Pinitial, simtimes, func) {
+p_wrapper = function(r, K, Pinitial, simtimes, func) {
     parms = list(r=r, K=K)
     result = ode(y=Pinitial, times=simtimes, func=func, parms=parms) 
     colnames(result)=c("time","P")
@@ -249,17 +261,20 @@ ggplot(tmp, aes(metric, value, col=metric))+geom_boxplot()
 sens_P_maxpop = sensitivity::tell(sens_P,allres$maxpop)
 
 # first-order indices (main effect without co-variance)
+# first order sensitivity index - says if you took the variance in the output, what portion of that variance into how much is due to growth rate and how much is due to carrying capacity, it portions it out - so it tells you how much variance is due to r and how much variance is due to K - the effect of that parameter on itself on the output - usually adds up to around 1
 sens_P_maxpop$S
 
 # total sensitivity index -note that this partitions the output variance 
+# total sensitivity, the sensitivities interact here between parameters - sensitivity of first parameter effects second parameter and so on - a place where parameters interact with eachother plus it's interactions
 sens_P_maxpop$T
 
 
 
 
 # create another one for max year
-sens_P_threshyear = sensitivity::tell(sens_P,allres$threshyear)
+sens_P_threshyear = sensitivity::tell(sens_P,allres$threshyear) # good to rename your sobol objects and keep it clean
 # first-order indices (main effect without co-variance)
+# so that's it, now we get these two different metrics of sensitivity
 sens_P_threshyear$S
 
 # total sensitivity index -note that this partitions the output variance - so values sum to 1

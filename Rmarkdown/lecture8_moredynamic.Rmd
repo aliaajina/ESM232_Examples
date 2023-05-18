@@ -16,7 +16,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(deSolve)
+library(deSolve) # includes some of the built in numerical integration solvers
 
 ```
 
@@ -216,7 +216,7 @@ ggplot(as.data.frame(results), aes(year,P))+geom_point()+labs(y="Population", "y
 
 
 # try again with different parameters
-alternativeparms = list(r=0.04, carry_capacity=500)
+alternativeparms = list(r=0.04, carry_capacity=100)
 results2=ode(initialrabbits, years, dexppop_play,alternativeparms)
 
 

@@ -30,7 +30,8 @@ diff1 = function(initialC, nx, dx, nt, dt,  D, area) {
 	# add an initial pulse of chemical to the first box at the first time
 	conc[1,1] = initialC
 
-	# cycle through time
+	# cycle through time with two for loops, first one goes through time, second one goes through space - 
+	#so for each time i'll look at the difference of concentration over this time in each space
 	for ( t in 1:(nt-1)) {
 	  # for each point in time cycle through space
 		for (x in 1:nx) {

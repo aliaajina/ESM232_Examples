@@ -119,7 +119,7 @@ length(cvar)
 ggplot(spatial_aver, aes(time, cvar))+geom_line()+labs(y="Spatial Variation")
 
 # plot coefficient of variation (so standard deviation divided by the mean)
-ggplot(spatial_aver, aes(time, 100*sqrt(cvar)/cmean))+geom_line()+labs(y="COV (as percent")
+ggplot(spatial_aver, aes(time, 100*sqrt(cvar)/cmean))+geom_line()+labs(y="COV (as percent)")
 
 
 ```
