@@ -244,7 +244,7 @@ colnames(sens_forest$X)= c("r","harv", "K")
 # try it out
 tm = seq(from=1, to=50)
 Cinitial = 1
-parms = list(r=sens_forest$X[1,1], harv=sens_forest$X[1,2], K=100)
+parms = list(r=sens_forest$X[1,1], harv=sens_forest$X[1,2], K=sens_forest$X[1,3])
 res = ode(y=Cinitial,times=tm, func=dharvest, parms=parms)
 res=as.data.frame(res)
 colnames(res)=c("time","C")
