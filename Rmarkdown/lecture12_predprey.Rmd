@@ -128,16 +128,18 @@ source("../R/lotvmod.R")
 lotvmod
 
 # note the use of with
-# initial conditions
+# initial conditions 0- have to have 2, have to specify which is predator and which is prey
 currpop = c(prey=10, pred=1)
 
 # time points to see results
 days = seq(from=1, to=100, by=1)
 
 # set parameters
+# alpha is their interaction - how often do a prey and predator meet and does the predator succesfully get the prey
 pars = c(rprey=0.5, alpha=0.3, eff=0.2,pmort=0.2, K=100)
 
 # run the model
+# run ode the same way
 res = ode(func=lotvmod, y=currpop, times=days, parms=pars)
 
 
@@ -159,6 +161,7 @@ dynamics (and more complex )
 # graph the results
 head(res)
 # rearrange for easy plotting
+# plot 1 - how are our predator and prey interacting - here we can see the cyclical behavious
 resl = as.data.frame(res) %>% pivot_longer(-time, names_to="animal", values_to="pop")
 p1=ggplot(resl, aes(time, pop, col=animal))+geom_line()
 
@@ -230,12 +233,14 @@ res = ode(func=lotvmodK, y=currpop, times=days, parms=pars)
 # rearrange for plotting
 resl = as.data.frame(res) %>% pivot_longer(-time, names_to="species", values_to="pop")
 
-# graph both populations over time
+# graph both populations over time - cyclic thing is occuring but it is converging to a sort of stable cycling - it just hasn't gotten there yet
 p1=ggplot(resl, aes(time, pop, col=species))+geom_line()
 p1
 
 # also look at relationships between preditor and prey population and use color for time 
 # I will remove the legend here to make it easier to see 
+# time dividied by 10 and rounded it so we donn't have too many colors
+# using color to show....
 p2 = ggplot(as.data.frame(res), aes(pred, prey, col=(round(time/10))))+geom_point()+theme(legend.position = "none")
 p2
 p2 = ggplot(as.data.frame(res), aes(pred, prey, col=as.factor(round(time/10))))+geom_point()+theme(legend.position = "none")
@@ -249,6 +254,11 @@ ggarrange(p1,p2)
 # Competition
 
 Species 1 (or Company 1)
+
+R here is just the intrinsic growth rates
+K is carrying capacity
+She used K1 and K2 which implies the carrying capacity for SP 1 is diff than SP 2
+We may just have 1 K
 
 $\frac{\partial s_1}{\partial t} = r_{1} * s_1 * (1-(\frac{s_1+\alpha_{12} * s_2}{K_1}))$
 
